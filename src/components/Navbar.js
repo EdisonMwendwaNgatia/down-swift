@@ -132,8 +132,8 @@ const Navbar = () => {
       <Logo>DownSwift</Logo>
       <NavLinks>
         <NavLink><a href="/">Home</a></NavLink>
-        <NavLink><a href="/terms">Terms</a></NavLink>
-        <NavLink><a href="/contact">Contact</a></NavLink>
+        <NavLink><a href="#terms">Terms</a></NavLink>
+        <NavLink><a href="#contact">Contact</a></NavLink>
       </NavLinks>
     </NavbarContainer>
   );
