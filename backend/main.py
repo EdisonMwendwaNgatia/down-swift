@@ -9,6 +9,7 @@ import logging
 import tempfile
 import shutil
 import anyio
+import traceback
 
 app = FastAPI()
 
@@ -118,9 +119,9 @@ async def download_video(request: VideoRequest):
         shutil.rmtree(tmp_dir, ignore_errors=True)
         raise HTTPException(status_code=500, detail="Failed to download. It may be restricted or unavailable.")
     except Exception as e:
-        logger.error(f"Unexpected error: {e}")
+        logger.error(f"Unexpected error: {e}\n{traceback.format_exc}")
         shutil.rmtree(tmp_dir, ignore_errors=True)
-        raise HTTPException(status_code=500, detail="An unexpected error occurred.")
+        raise HTTPException(status_code=500, detail=f"Error : {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn
