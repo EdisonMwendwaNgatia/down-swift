@@ -24,10 +24,10 @@ const AppContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(45deg, #121212, #1DB954, #191414);
+  background: linear-gradient(45deg, #121212, #1db954, #191414);
   background-size: 400% 400%;
   animation: ${backgroundAnimation} 15s ease infinite;
-  font-family: 'Spotify', Arial, sans-serif;
+  font-family: "Spotify", Arial, sans-serif;
   padding: 20px;
 `;
 
@@ -43,7 +43,7 @@ const DownloaderCard = styled.div`
 `;
 
 const Title = styled.h2`
-  color: #1DB954;
+  color: #1db954;
   text-align: center;
   margin-bottom: 30px;
   font-weight: bold;
@@ -63,7 +63,7 @@ const InputField = styled.input`
 
   &:focus {
     outline: none;
-    border: 2px solid #1DB954;
+    border: 2px solid #1db954;
     box-shadow: 0 0 10px rgba(29, 185, 84, 0.5);
   }
 
@@ -93,7 +93,7 @@ const Select = styled.select`
 const Button = styled.button`
   width: 100%;
   padding: 12px;
-  background-color: #1DB954;
+  background-color: #1db954;
   color: black;
   border: none;
   border-radius: 8px;
@@ -103,7 +103,7 @@ const Button = styled.button`
   animation: ${pulseAnimation} 2s infinite;
 
   &:hover {
-    background-color: #1ED760;
+    background-color: #1ed760;
     transform: scale(1.02);
   }
 
@@ -116,7 +116,7 @@ const Button = styled.button`
 `;
 
 const ErrorMessage = styled.p`
-  color: #FF5E5E;
+  color: #ff5e5e;
   text-align: center;
   margin-top: 20px;
 `;
@@ -124,14 +124,14 @@ const ErrorMessage = styled.p`
 const DownloadLink = styled.a`
   display: block;
   text-align: center;
-  color: #1DB954;
+  color: #1db954;
   margin-top: 20px;
   text-decoration: none;
   font-weight: bold;
   transition: color 0.3s ease;
 
   &:hover {
-    color: #1ED760;
+    color: #1ed760;
     text-decoration: underline;
   }
 `;
@@ -145,20 +145,29 @@ const Loader = styled.div`
   margin: 20px auto;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     top: 0;
     height: 100%;
     width: 0;
-    background: #1DB954;
+    background: #1db954;
     animation: loading 2s linear infinite;
   }
 
   @keyframes loading {
-    0% { width: 0; left: 0; }
-    50% { width: 100%; left: 0; }
-    100% { width: 0; left: 100%; }
+    0% {
+      width: 0;
+      left: 0;
+    }
+    50% {
+      width: 100%;
+      left: 0;
+    }
+    100% {
+      width: 0;
+      left: 100%;
+    }
   }
 `;
 
@@ -174,50 +183,80 @@ function App() {
       setError("Please enter a valid YouTube URL.");
       return;
     }
-  
+
     setLoading(true);
     setError("");
     setDownloadLink("");
-  
+
     try {
-      const response = await axios.post("http://127.0.0.1:8000/download/", { url, format }, { responseType: 'blob' });
-  
-      const blob = new Blob([response.data], { type: response.headers["content-type"] });
+      const BASE_URL = "https://down-swift.onrender.com"; // Your live backend
+
+      const response = await axios.post(
+        `${BASE_URL}/download/`,
+        { url, format },
+        { responseType: "blob" }
+      );
+
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = downloadUrl;
-      link.setAttribute("download", `download.${format === "audio_mp3" ? "mp3" : format === "audio_mp4" ? "mp4" : "mp4"}`);
+      link.setAttribute(
+        "download",
+        `download.${
+          format === "audio_mp3"
+            ? "mp3"
+            : format === "audio_mp4"
+            ? "mp4"
+            : "mp4"
+        }`
+      );
       document.body.appendChild(link);
       link.click();
       link.remove();
     } catch (err) {
-      setError(err.response?.data?.detail || "Failed to fetch download link. Ensure backend is running.");
+      setError(
+        err.response?.data?.detail ||
+          "Failed to fetch download link. Ensure backend is running."
+      );
     } finally {
       setLoading(false);
     }
   };
-  
 
   return (
     <>
-    <Navbar/>
-    <AppContainer>
-      <DownloaderCard>
-        <Title>YouTube Downloader</Title>
-        <InputField type="text" placeholder="Paste YouTube URL here" value={url} onChange={(e) => setUrl(e.target.value)} />
-        <Select value={format} onChange={(e) => setFormat(e.target.value)}>
-          <option value="video">Video (MP4)</option>
-          <option value="audio_mp4">Audio (MP4)</option>
-          <option value="audio_mp3">Audio (MP3)</option>
-        </Select>
-        <Button onClick={handleDownload} disabled={loading}>{loading ? "Processing..." : "Get Download Link"}</Button>
-        {loading && <Loader />}
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-        {downloadLink && <DownloadLink href={downloadLink} download>Click here to download</DownloadLink>}
-      </DownloaderCard>
-    </AppContainer>
-    <Terms/>
-    <Footer/>
+      <Navbar />
+      <AppContainer>
+        <DownloaderCard>
+          <Title>YouTube Downloader</Title>
+          <InputField
+            type="text"
+            placeholder="Paste YouTube URL here"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+          />
+          <Select value={format} onChange={(e) => setFormat(e.target.value)}>
+            <option value="video">Video (MP4)</option>
+            <option value="audio_mp4">Audio (MP4)</option>
+            <option value="audio_mp3">Audio (MP3)</option>
+          </Select>
+          <Button onClick={handleDownload} disabled={loading}>
+            {loading ? "Processing..." : "Get Download Link"}
+          </Button>
+          {loading && <Loader />}
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+          {downloadLink && (
+            <DownloadLink href={downloadLink} download>
+              Click here to download
+            </DownloadLink>
+          )}
+        </DownloaderCard>
+      </AppContainer>
+      <Terms />
+      <Footer />
     </>
   );
 }
