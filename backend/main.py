@@ -50,6 +50,7 @@ async def download_video(request: VideoRequest):
             'quiet': True,
             'progress_hooks': [yt_dlp_progress_hook],
             'outtmpl': os.path.join(tmp_dir, f'{video_id}.%(ext)s'),
+            'cookiefile': 'youtube-cookies.txt',  # <-- Added to authenticate requests
         }
 
         if format == "video":
