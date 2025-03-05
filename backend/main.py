@@ -20,6 +20,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+def read_root():
+    return {"message": "YouTube Downloader API is running!"}
+
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
